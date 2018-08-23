@@ -7,9 +7,11 @@ import com.bellszhu.elasticsearch.plugin.synonym.service.DynamicSynonymAnalysisS
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.service.ClusterService;
 import org.elasticsearch.common.component.LifecycleComponent;
+import org.elasticsearch.common.io.stream.NamedWriteableRegistry;
 import org.elasticsearch.common.xcontent.NamedXContentRegistry;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.env.Environment;
+import org.elasticsearch.env.NodeEnvironment;
 import org.elasticsearch.index.IndexSettings;
 import org.elasticsearch.index.analysis.AnalysisRegistry;
 import org.elasticsearch.index.analysis.TokenFilterFactory;
@@ -19,7 +21,6 @@ import org.elasticsearch.plugins.Plugin;
 
 import com.bellszhu.elasticsearch.plugin.synonym.analysis.DynamicSynonymTokenFilterFactory;
 import org.elasticsearch.script.ScriptService;
-import org.elasticsearch.search.SearchRequestParsers;
 import org.elasticsearch.threadpool.ThreadPool;
 import org.elasticsearch.watcher.ResourceWatcherService;
 
@@ -38,22 +39,18 @@ import static java.util.Collections.singletonList;
 public class DynamicSynonymPlugin extends Plugin  implements AnalysisPlugin {
     private PluginComponent pluginComponent = new PluginComponent();
 
+  
     @Override
-    public Collection<Object> createComponents(
-            Client client,
-            ClusterService clusterService,
-            ThreadPool threadPool,
-            ResourceWatcherService resourceWatcherService,
-            ScriptService scriptService,
-            SearchRequestParsers searchRequestParsers, 
-            NamedXContentRegistry xContentRegistry
-    ) {
-        Collection<Object> components = new ArrayList<>();
+	public Collection<Object> createComponents(Client client, ClusterService clusterService, ThreadPool threadPool,
+			ResourceWatcherService resourceWatcherService, ScriptService scriptService,
+			NamedXContentRegistry xContentRegistry, Environment environment, NodeEnvironment nodeEnvironment,
+			NamedWriteableRegistry namedWriteableRegistry) {
+    	Collection<Object> components = new ArrayList<>();
         components.add(pluginComponent);
-        return components;
-    }
+		return components;
+	}
 
-    @Override
+	@Override
     public Collection<Class<? extends LifecycleComponent>> getGuiceServiceClasses() {
         return singletonList(DynamicSynonymAnalysisService.class);
     }
